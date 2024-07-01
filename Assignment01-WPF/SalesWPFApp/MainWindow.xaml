@@ -54,7 +54,7 @@
                             <DataGridTextColumn Header="Category ID" Binding="{Binding CategoryId}" Width="*"/>
                             <DataGridTextColumn Header="Product Name" Binding="{Binding ProductName}" Width="*"/>
                             <DataGridTextColumn Header="Weight" Binding="{Binding Weight}" Width="*"/>
-                            <DataGridTextColumn Header="Unit Price" Binding="{Binding UnitPrice}" Width="*"/>
+                            <DataGridTextColumn Header="Unit Price" Binding="{Binding UnitPrice, StringFormat={}{0:F3}}" Width="*"/>
                             <DataGridTextColumn Header="Units In Stock" Binding="{Binding UnitsInStock}" Width="*"/>
                         </DataGrid.Columns>
                     </DataGrid>
@@ -124,7 +124,7 @@
                             <DataGridTextColumn Header="Order Date" Binding="{Binding OrderDate}" Width="*"/>
                             <DataGridTextColumn Header="Required Date" Binding="{Binding RequiredDate}" Width="*"/>
                             <DataGridTextColumn Header="Shipped Date" Binding="{Binding ShippedDate}" Width="*"/>
-                            <DataGridTextColumn Header="Freight" Binding="{Binding Freight}" Width="*"/>
+                            <DataGridTextColumn Header="Freight" Binding="{Binding Freight, StringFormat={}{0:F3}}" Width="*"/>
                         </DataGrid.Columns>
                     </DataGrid>
 
@@ -138,10 +138,10 @@
                             <DataGridTextColumn Header="Product ID" Binding="{Binding ProductId}" Width="*"/>
                             <DataGridTextColumn Header="Category ID" Binding="{Binding CategoryId}" Width="*"/>
                             <DataGridTextColumn Header="Product Name" Binding="{Binding ProductName}" Width="*"/>
-                            <DataGridTextColumn Header="Unit Price" Binding="{Binding UnitPrice}" Width="*"/>
+                            <DataGridTextColumn Header="Unit Price" Binding="{Binding UnitPrice, StringFormat={}{0:F3}}" Width="*"/>
                             <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="*"/>
                             <DataGridTextColumn Header="Discount" Binding="{Binding Discount}" Width="*"/>
-                            <DataGridTextColumn Header="Sum" Binding="{Binding Sum}" Width="*"/>
+                            <DataGridTextColumn Header="Sum" Binding="{Binding Sum, StringFormat={}{0:F3}}" Width="*"/>
                         </DataGrid.Columns>
                     </DataGrid>
 
@@ -231,7 +231,7 @@
                     <DataGrid Name="SalesReportDataGrid" AutoGenerateColumns="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Date" Binding="{Binding Date, StringFormat=dd/MM/yyyy}" Width="*" />
-                            <DataGridTextColumn Header="Total Sales" Binding="{Binding TotalSales}" Width="*" />
+                            <DataGridTextColumn Header="Total Sales" Binding="{Binding TotalSales, StringFormat={}{0:F3}}" Width="*" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </StackPanel>
