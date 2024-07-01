@@ -1,0 +1,62 @@
+﻿<Window x:Class="SalesWPFApp.EditOrder"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Edit Order" Height="450" Width="400">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" HorizontalAlignment="Center">
+            <TextBlock Text="Edit Order" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Margin="0,0,0,10">
+            <TextBlock Text="Order Date"/>
+            <DatePicker x:Name="OrderDatePicker"/>
+
+            <TextBlock Text="Required Date"/>
+            <DatePicker x:Name="RequiredDatePicker"/>
+
+            <TextBlock Text="Shipped Date"/>
+            <DatePicker x:Name="ShippedDatePicker"/>
+
+            <TextBlock Text="Freight"/>
+            <TextBox x:Name="FreightTextBox"/>
+
+            <TextBlock Text="Member"/>
+            <ComboBox x:Name="MemberComboBox" DisplayMemberPath="CompanyName" SelectedValuePath="MemberId"/>
+
+            <!-- Add OrderDetails DataGrid Here -->
+            <TextBlock Text="Order Details"/>
+            <DataGrid x:Name="OrderDetailsDataGrid" AutoGenerateColumns="False" CanUserAddRows="True">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Product ID" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding ProductId}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
+                                <ComboBox ItemsSource="{Binding Path=DataContext.Products, RelativeSource={RelativeSource AncestorType=Window}}"
+                                          DisplayMemberPath="ProductName"
+                                          SelectedValuePath="ProductId"
+                                          SelectedValue="{Binding ProductId, UpdateSourceTrigger=PropertyChanged}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="*"/>
+                    <DataGridTextColumn Header="Discount" Binding="{Binding Discount}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Content="Save" Click="Save_Click" Margin="5"/>
+            <Button Content="Cancel" Click="Cancel_Click" Margin="5"/>
+        </StackPanel>
+    </Grid>
+</Window>

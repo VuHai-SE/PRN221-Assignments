@@ -1,0 +1,22 @@
+﻿<Window x:Class="SalesWPFApp.AddProduct"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Add Product" Height="300" Width="400"
+        WindowStartupLocation="CenterOwner">
+    <Grid Margin="10">
+        <StackPanel>
+            <Label Content="Add new Product" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold"/>
+            <TextBox x:Name="ProductNameTextBox" Text="Product Name" Foreground="Gray" Margin="0,5"
+                     GotFocus="RemovePlaceholderText" LostFocus="AddPlaceholderText"/>
+            <TextBox x:Name="CategoryIdTextBox" Text="Category ID" Foreground="Gray" Margin="0,5"
+                     GotFocus="RemovePlaceholderText" LostFocus="AddPlaceholderText"/>
+            <TextBox x:Name="WeightTextBox" Text="Weight" Foreground="Gray" Margin="0,5"
+                     GotFocus="RemovePlaceholderText" LostFocus="AddPlaceholderText"/>
+            <TextBox x:Name="UnitPriceTextBox" Text="Unit Price" Foreground="Gray" Margin="0,5"
+                     GotFocus="RemovePlaceholderText" LostFocus="AddPlaceholderText"/>
+            <TextBox x:Name="UnitsInStockTextBox" Text="Units In Stock" Foreground="Gray" Margin="0,5"
+                     GotFocus="RemovePlaceholderText" LostFocus="AddPlaceholderText"/>
+            <Button Content="Save" Click="Save_Click" Width="100" HorizontalAlignment="Center" Margin="10"/>
+        </StackPanel>
+    </Grid>
+</Window>
