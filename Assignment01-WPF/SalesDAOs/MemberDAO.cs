@@ -46,6 +46,9 @@ namespace SalesDAOs
 
         public void AddMember(Member member)
         {
+            int newMemberId = _context.Members.Any() ? _context.Members.Max(m => m.MemberId) + 1 : 1;
+            member.MemberId = newMemberId;
+
             _context.Members.Add(member);
             _context.SaveChanges();
         }
