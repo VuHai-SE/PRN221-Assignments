@@ -26,6 +26,12 @@ namespace SalesDAOs
             return _context.Products.FirstOrDefault(p => p.ProductId == id);
         }
 
+        public bool IsProductInOrders(int productId)
+        {
+            return _context.OrderDetails.Any(od => od.ProductId == productId);
+        }
+
+
         public void AddProduct(Product product)
         {
             _context.Products.Add(product);

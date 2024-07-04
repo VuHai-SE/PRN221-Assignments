@@ -14,47 +14,68 @@ namespace SalesRazorPageApp.Pages.Products
     public class DeleteModel : PageModel
     {
         private readonly IProductRepository _productRepository;
+        private readonly ILogger<DeleteModel> _logger;
 
-        public DeleteModel(IProductRepository productRepository)
+        public DeleteModel(IProductRepository productRepository, ILogger<DeleteModel> logger)
         {
             _productRepository = productRepository;
+            _logger = logger;
         }
 
         [BindProperty]
-        public Product Product { get; set; } = default!;
+        public Product Product { get; set; }
+        public string ErrorMessage { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public IActionResult OnGet(int id)
         {
-            if (id == null || _productRepository.GetAll == null)
+            try
             {
-                return NotFound();
-            }
+                Product = _productRepository.GetById(id);
 
-            var product = _productRepository.GetById(id.Value);
+                if (Product == null)
+                {
+                    _logger.LogWarning("Product with ID {ProductId} not found.", id);
+                    return RedirectToPage("/Error");
+                }
 
-            if (product == null)
-            {
-                return NotFound();
+                return Page();
             }
-            else
+            catch (Exception ex)
             {
-                Product = product;
+                _logger.LogError(ex, "Error getting product with ID {ProductId}.", id);
+                return RedirectToPage("/Error");
             }
-            return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(int? id)
+        public IActionResult OnPost()
         {
-            if (id == null || _productRepository.GetAll == null)
+            if (Product.ProductId <= 0)
             {
-                return NotFound();
+                _logger.LogWarning("Invalid ProductId {ProductId} provided for delete.", Product.ProductId);
+                return RedirectToPage("/Error");
             }
-            var product = _productRepository.GetById(id.Value);
 
-            if (product != null)
+            try
             {
-                Product = product;
-                _productRepository.Delete(id.Value);
+                var productFromDb = _productRepository.GetById(Product.ProductId);
+                if (productFromDb == null)
+                {
+                    _logger.LogWarning("Product with ID {ProductId} not found for delete.", Product.ProductId);
+                    return RedirectToPage("/Error");
+                }
+
+                if (_productRepository.IsProductInOrders(Product.ProductId))
+                {
+                    ErrorMessage = "Product cannot be deleted because it is being used in Orders.";
+                    return Page();
+                }
+
+                _productRepository.Delete(Product.ProductId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting product with ID {ProductId}.", Product.ProductId);
+                return RedirectToPage("/Error");
             }
 
             return RedirectToPage("./Index");

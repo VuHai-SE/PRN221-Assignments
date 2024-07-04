@@ -11,6 +11,7 @@ namespace SalesRepositories
     {
         IEnumerable<Product> GetAll();
         Product GetById(int id);
+        bool IsProductInOrders(int productId);
         void Add(Product product);
         void Update(Product product);
         void Delete(int id);

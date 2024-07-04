@@ -27,6 +27,12 @@ namespace SalesRepositories
             return _productDAO.GetProductById(id);
         }
 
+        public bool IsProductInOrders(int productId)
+        {
+            return _productDAO.IsProductInOrders(productId);
+        }
+
+
         public void Add(Product product)
         {
             _productDAO.AddProduct(product);
