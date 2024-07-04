@@ -12,6 +12,8 @@ builder.Services.AddDbContext<PRN_Assignment02Context>(options =>
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<ProductDAO>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<OrderDAO>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 // Cấu hình logging
 builder.Logging.ClearProviders();
