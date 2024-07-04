@@ -1,7 +1,18 @@
+﻿using Microsoft.EntityFrameworkCore;
+using SalesDAOs;
+using SalesRepositories;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Đăng ký PRN_Assignment02Context với DI container
+builder.Services.AddDbContext<PRN_Assignment02Context>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionStringDB")));
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddScoped<ProductDAO>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
 // Cấu hình logging
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
