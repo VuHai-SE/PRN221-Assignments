@@ -10,6 +10,13 @@
     <a asp-page="Create">Create New</a>
 </p>
 
+<form method="get">
+    <div class="form-group">
+        <input type="text" name="SearchTerm" value="@Model.SearchTerm" class="form-control" placeholder="Search Orders" />
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
 <table class="table table-striped table-bordered">
     <thead class="thead-dark">
         <tr>
@@ -38,6 +45,8 @@
                 <td>@order.Freight</td>
                 <td>
                     <button type="button" class="btn btn-primary btn-sm" onclick="toggleDetails(@order.OrderId)">Details</button>
+                    <a asp-page="./Edit" asp-route-id="@order.OrderId">Edit</a> |
+                    <a asp-page="./Delete" asp-route-id="@order.OrderId">Delete</a>
                 </td>
             </tr>
             <tr id="details-@order.OrderId" style="display:none;">
@@ -58,17 +67,20 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var detail in order.OrderDetails)
+                                    @if (order.OrderDetails != null)
                                     {
-                                        <tr>
-                                            <td>@detail.ProductId</td>
-                                            <td>@detail.CategoryId</td>
-                                            <td>@detail.ProductName</td>
-                                            <td>@detail.UnitPrice</td>
-                                            <td>@detail.Quantity</td>
-                                            <td>@detail.Discount</td>
-                                            <td>@detail.Sum</td>
-                                        </tr>
+                                        @foreach (var detail in order.OrderDetails)
+                                        {
+                                            <tr>
+                                                <td>@detail.ProductId</td>
+                                                <td>@detail.CategoryId</td>
+                                                <td>@detail.ProductName</td>
+                                                <td>@detail.UnitPrice</td>
+                                                <td>@detail.Quantity</td>
+                                                <td>@detail.Discount</td>
+                                                <td>@detail.Sum</td>
+                                            </tr>
+                                        }
                                     }
                                 </tbody>
                             </table>

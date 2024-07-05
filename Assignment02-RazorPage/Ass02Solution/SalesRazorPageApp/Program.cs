@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SalesDAOs;
+using SalesRazorPageApp.Pages.Orders;
 using SalesRepositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,10 +15,16 @@ builder.Services.AddScoped<ProductDAO>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<OrderDAO>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<OrderDetailDAO>();
+builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
+builder.Services.AddScoped<MemberDAO>();
+builder.Services.AddScoped<IMemberRepository, MemberRepository>();
+builder.Services.AddLogging();
 
 // Cấu hình logging
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
+builder.Logging.SetMinimumLevel(LogLevel.Debug);
 
 var app = builder.Build();
 

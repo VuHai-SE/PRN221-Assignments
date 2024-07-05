@@ -6,16 +6,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace SalesDAOs
 {
     public class OrderDAO
     {
         private readonly PRN_Assignment02Context _context;
+        private readonly ILogger<OrderDAO> _logger;
 
-        public OrderDAO(PRN_Assignment02Context context)
+        public OrderDAO(PRN_Assignment02Context context, ILogger<OrderDAO> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         //public IEnumerable<OrderDetailDto> GetAllOrders()
@@ -37,7 +40,8 @@ namespace SalesDAOs
 
         public IEnumerable<OrderDetailDto> GetAllOrders()
         {
-            return _context.Orders
+            _logger.LogInformation("Fetching all orders.");
+            var orders = _context.Orders
                 .Include(o => o.Member)
                 .Include(o => o.OrderDetails).ThenInclude(od => od.Product)
                 .Select(o => new OrderDetailDto
@@ -54,13 +58,29 @@ namespace SalesDAOs
                     OrderDetails = o.OrderDetails.Select(od => new OrderDetailItemDto
                     {
                         ProductId = od.ProductId,
-                        CategoryId = (int)od.Product.CategoryId,
+                        CategoryId = od.Product.CategoryId ?? 0,
                         ProductName = od.Product.ProductName,
                         UnitPrice = od.UnitPrice,
                         Quantity = od.Quantity,
-                        Discount = (float)od.Discount
+                        Discount = (float?)(od.Discount ?? 0f)
                     }).ToList()
                 }).ToList();
+
+            if (!orders.Any())
+            {
+                _logger.LogWarning("No orders found.");
+            }
+
+            return orders;
+        }
+
+
+
+
+
+        public IEnumerable<Member> GetAllMembers()
+        {
+            return _context.Members.ToList();
         }
 
 
@@ -121,24 +141,43 @@ namespace SalesDAOs
                 }).ToList();
         }
 
-        public int GetNextOrderId()
-        {
-            return _context.Orders.Any() ? _context.Orders.Max(o => o.OrderId) + 1 : 1;
-        }
+        //public void AddOrder(Order order, List<OrderDetail> orderDetails)
+        //{
+        //    try
+        //    {
+        //        _context.Orders.Add(order);
+        //        _context.SaveChanges(); // Save to get OrderId for OrderDetails
 
-        public void AddOrder(Order order, List<OrderDetail> orderDetails)
-        {
-            // Đảm bảo OrderId được tạo tự động
-            order.OrderId = GetNextOrderId();
+        //        foreach (var detail in orderDetails)
+        //        {
+        //            detail.OrderId = order.OrderId;
+        //            _context.OrderDetails.Add(detail);
+        //        }
 
+        //        _context.SaveChanges();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Log the error
+        //        Console.WriteLine("Error adding order: " + ex.Message);
+        //        throw;
+        //    }
+        //}
+
+        public void AddOrder(Order order)
+        {
             _context.Orders.Add(order);
-            foreach (var detail in orderDetails)
-            {
-                detail.OrderId = order.OrderId;
-                _context.OrderDetails.Add(detail);
-            }
             _context.SaveChanges();
         }
+
+        public void AddOrderDetails(IEnumerable<OrderDetail> orderDetails)
+        {
+            _logger.LogInformation("Adding order details."); // Add this line for logging
+            _context.OrderDetails.AddRange(orderDetails);
+            _context.SaveChanges();
+            _logger.LogInformation("Order details added."); // Add this line for logging
+        }
+
 
 
         public void UpdateOrder(Order order, List<OrderDetail> orderDetails)
@@ -163,29 +202,6 @@ namespace SalesDAOs
                 _context.SaveChanges();
             }
         }
-
-
-        public void DeleteOrder(int orderId)
-        {
-            var order = _context.Orders.Include(o => o.OrderDetails).FirstOrDefault(o => o.OrderId == orderId);
-            if (order != null)
-            {
-                // Xóa các OrderDetails liên quan trước khi xóa Order
-                foreach (var detail in order.OrderDetails.ToList())
-                {
-                    _context.OrderDetails.Remove(detail);
-                }
-
-                // Xóa Order
-                _context.Orders.Remove(order);
-
-                // Lưu thay đổi
-                _context.SaveChanges();
-            }
-        }
-
-
-
 
         public Order GetOrder(int orderId)
         {
@@ -258,5 +274,38 @@ namespace SalesDAOs
 
             return salesReport;
         }
+
+        public void DeleteOrder(Order order)
+        {
+            _context.Orders.Remove(order);
+            _context.SaveChanges();
+        }
+
+        public void DeleteOrderDetail(OrderDetail orderDetail)
+        {
+            _context.OrderDetails.Remove(orderDetail);
+            _context.SaveChanges();
+        }
+
+        public Order GetOrderById2(int orderId)
+        {
+            return _context.Orders
+                .Include(o => o.Member)
+                .Include(o => o.OrderDetails)
+                .FirstOrDefault(o => o.OrderId == orderId);
+        }
+
+        public void UpdateOrderDetail(OrderDetail orderDetail)
+        {
+            var existingOrderDetail = _context.OrderDetails
+                .FirstOrDefault(od => od.OrderId == orderDetail.OrderId && od.ProductId == orderDetail.ProductId);
+
+            if (existingOrderDetail != null)
+            {
+                _context.Entry(existingOrderDetail).CurrentValues.SetValues(orderDetail);
+                _context.SaveChanges();
+            }
+        }
+
     }
 }

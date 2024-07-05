@@ -2,21 +2,19 @@
 @model SalesRazorPageApp.Pages.Orders.EditModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Order";
 }
 
-<h1>Edit</h1>
+<h1>Edit Order</h1>
 
 <h4>Order</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Order.OrderId" />
             <div class="form-group">
-                <label asp-for="Order.MemberId" class="control-label"></label>
-                <select asp-for="Order.MemberId" class="form-control" asp-items="ViewBag.MemberId"></select>
+                <label asp-for="Order.MemberId" class="control-label">Member</label>
+                <select asp-for="Order.MemberId" class="form-control" asp-items="Model.Members"></select>
                 <span asp-validation-for="Order.MemberId" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -39,17 +37,49 @@
                 <input asp-for="Order.Freight" class="form-control" />
                 <span asp-validation-for="Order.Freight" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+
+            <h4>Order Details</h4>
+            <div id="orderDetailsContainer">
+                @for (int i = 0; i < Model.Order.OrderDetails.Count; i++)
+                {
+                    <div class="form-group orderDetail">
+                        <label>Product</label>
+                        <select asp-for="Order.OrderDetails[i].ProductId" class="form-control" asp-items="Model.Products"></select>
+                        <label>Unit Price</label>
+                        <input asp-for="Order.OrderDetails[i].UnitPrice" class="form-control" />
+                        <label>Quantity</label>
+                        <input asp-for="Order.OrderDetails[i].Quantity" class="form-control" />
+                        <span asp-validation-for="Order.OrderDetails[i].Quantity" class="text-danger"></span>
+                        <label>Discount</label>
+                        <input asp-for="Order.OrderDetails[i].Discount" class="form-control" />
+                        <span asp-validation-for="Order.OrderDetails[i].Discount" class="text-danger"></span>
+                    </div>
+                }
             </div>
+            <button type="button" id="addOrderDetailButton" class="btn btn-secondary">Add Another Product</button>
+            <br />
+            <button type="submit" class="btn btn-primary">Save Changes</button>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-page="./Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        var products = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Products));
+
+        document.getElementById("addOrderDetailButton").addEventListener("click", function () {
+            var container = document.getElementById("orderDetailsContainer");
+            var newDetail = container.firstElementChild.cloneNode(true);
+            container.appendChild(newDetail);
+        });
+
+        document.getElementById("orderDetailsContainer").addEventListener("change", function (event) {
+            if (event.target.name.includes("ProductId")) {
+                var unitPriceInput = event.target.closest(".orderDetail").querySelector("input[name*='UnitPrice']");
+                var productId = event.target.value;
+                var product = products.find(p => p.ProductId == productId);
+                unitPriceInput.value = product ? product.UnitPrice : '';
+            }
+        });
+    </script>
 }

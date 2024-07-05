@@ -1,44 +1,65 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SalesBOs;
-using SalesDAOs;
+using SalesRepositories;
+using System.Linq;
 
 namespace SalesRazorPageApp.Pages.Orders
 {
     public class CreateModel : PageModel
     {
-        private readonly SalesDAOs.PRN_Assignment02Context _context;
+        private readonly IOrderRepository _orderRepository;
+        private readonly IOrderDetailRepository _orderDetailRepository;
+        private readonly IMemberRepository _memberRepository;
+        private readonly IProductRepository _productRepository;
 
-        public CreateModel(SalesDAOs.PRN_Assignment02Context context)
+        public CreateModel(IOrderRepository orderRepository,
+                           IOrderDetailRepository orderDetailRepository,
+                           IMemberRepository memberRepository,
+                           IProductRepository productRepository)
         {
-            _context = context;
-        }
-
-        public IActionResult OnGet()
-        {
-        ViewData["MemberId"] = new SelectList(_context.Members, "MemberId", "Email");
-            return Page();
+            _orderRepository = orderRepository;
+            _orderDetailRepository = orderDetailRepository;
+            _memberRepository = memberRepository;
+            _productRepository = productRepository;
         }
 
         [BindProperty]
-        public Order Order { get; set; } = default!;
-        
+        public Order Order { get; set; } = new Order();
 
-        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
-        public async Task<IActionResult> OnPostAsync()
+        public SelectList Members { get; set; }
+        public IList<Product> Products { get; set; }
+
+        public IActionResult OnGet()
         {
-          if (!ModelState.IsValid || _context.Orders == null || Order == null)
-            {
-                return Page();
-            }
+            Members = new SelectList(_memberRepository.GetAllMembers(), "MemberId", "CompanyName");
+            Products = _productRepository.GetAll().ToList();
+            return Page();
+        }
 
-            _context.Orders.Add(Order);
-            await _context.SaveChangesAsync();
+        public IActionResult OnPost()
+        {
+            //if (!ModelState.IsValid)
+            //{
+            //    Members = new SelectList(_memberRepository.GetAllMembers(), "MemberId", "CompanyName");
+            //    Products = _productRepository.GetAll().ToList();
+            //    return Page();
+            //}
+
+            _orderRepository.AddOrder(Order);
+
+            foreach (var orderDetail in Request.Form["ProductId"].Select((_, i) => new OrderDetail
+            {
+                OrderId = Order.OrderId,
+                ProductId = int.Parse(Request.Form["ProductId"][i]),
+                UnitPrice = decimal.Parse(Request.Form["UnitPrice"][i]),
+                Quantity = int.Parse(Request.Form["Quantity"][i]),
+                Discount = string.IsNullOrEmpty(Request.Form["Discount"][i]) ? (double?)null : double.Parse(Request.Form["Discount"][i])
+            }))
+            {
+                _orderDetailRepository.AddOrderDetail(orderDetail);
+            }
 
             return RedirectToPage("./Index");
         }

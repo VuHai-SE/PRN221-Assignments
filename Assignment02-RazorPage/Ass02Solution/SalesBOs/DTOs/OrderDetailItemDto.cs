@@ -9,11 +9,12 @@ namespace SalesBOs.DTOs
     public class OrderDetailItemDto
     {
         public int ProductId { get; set; }
-        public int CategoryId { get; set; }
+        public int? CategoryId { get; set; } // Allow nullable values
         public string ProductName { get; set; }
         public decimal UnitPrice { get; set; }
         public int Quantity { get; set; }
-        public float Discount { get; set; }
-        public decimal Sum => UnitPrice * Quantity * (1 - (decimal)Discount);
+        public float? Discount { get; set; } // Allow nullable values
+        public decimal Sum => UnitPrice * Quantity * (1 - (decimal)(Discount ?? 0));
     }
+
 }

@@ -30,7 +30,7 @@ namespace SalesRazorPageApp.Pages.Products
 
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
-        public async Task<IActionResult> OnPostAsync()
+        public IActionResult OnPost()
         {
             if (!ModelState.IsValid || _productRepository.GetAll == null || Product == null)
             {

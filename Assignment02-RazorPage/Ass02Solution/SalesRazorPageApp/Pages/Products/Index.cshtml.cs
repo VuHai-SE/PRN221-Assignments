@@ -22,7 +22,7 @@ namespace SalesRazorPageApp.Pages.Products
 
         public IList<Product> Product { get; set; } = default!;
 
-        public async Task OnGetAsync()
+        public void OnGet()
         {
             if (_productRepository.GetAll != null)
             {

@@ -1,78 +1,74 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using SalesBOs;
-using SalesDAOs;
+using SalesRepositories;
+using System.Linq;
 
 namespace SalesRazorPageApp.Pages.Orders
 {
     public class EditModel : PageModel
     {
-        private readonly SalesDAOs.PRN_Assignment02Context _context;
+        private readonly IOrderRepository _orderRepository;
+        private readonly IOrderDetailRepository _orderDetailRepository;
+        private readonly IMemberRepository _memberRepository;
+        private readonly IProductRepository _productRepository;
 
-        public EditModel(SalesDAOs.PRN_Assignment02Context context)
+        public EditModel(IOrderRepository orderRepository,
+                         IOrderDetailRepository orderDetailRepository,
+                         IMemberRepository memberRepository,
+                         IProductRepository productRepository)
         {
-            _context = context;
+            _orderRepository = orderRepository;
+            _orderDetailRepository = orderDetailRepository;
+            _memberRepository = memberRepository;
+            _productRepository = productRepository;
         }
 
         [BindProperty]
-        public Order Order { get; set; } = default!;
+        public Order Order { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public SelectList Members { get; set; }
+        public SelectList Products { get; set; }
+
+        public IActionResult OnGet(int id)
         {
-            if (id == null || _context.Orders == null)
+            Order = _orderRepository.GetOrderById2(id);
+            if (Order == null)
             {
                 return NotFound();
             }
 
-            var order =  await _context.Orders.FirstOrDefaultAsync(m => m.OrderId == id);
-            if (order == null)
-            {
-                return NotFound();
-            }
-            Order = order;
-           ViewData["MemberId"] = new SelectList(_context.Members, "MemberId", "Email");
+            Members = new SelectList(_memberRepository.GetAllMembers(), "MemberId", "CompanyName");
+            Products = new SelectList(_productRepository.GetAll().ToList(), "ProductId", "ProductName");
+
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public IActionResult OnPost()
         {
             if (!ModelState.IsValid)
             {
+                Members = new SelectList(_memberRepository.GetAllMembers(), "MemberId", "CompanyName");
+                Products = new SelectList(_productRepository.GetAll().ToList(), "ProductId", "ProductName");
                 return Page();
             }
 
-            _context.Attach(Order).State = EntityState.Modified;
+            _orderRepository.UpdateOrder(Order);
 
-            try
+            foreach (var orderDetail in Request.Form["ProductId"].Select((_, i) => new OrderDetail
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
+                OrderId = Order.OrderId,
+                ProductId = int.Parse(Request.Form["ProductId"][i]),
+                UnitPrice = decimal.Parse(Request.Form["UnitPrice"][i]),
+                Quantity = int.Parse(Request.Form["Quantity"][i]),
+                Discount = string.IsNullOrEmpty(Request.Form["Discount"][i]) ? (double?)null : double.Parse(Request.Form["Discount"][i])
+            }))
             {
-                if (!OrderExists(Order.OrderId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                _orderDetailRepository.UpdateOrderDetail(orderDetail);
             }
 
             return RedirectToPage("./Index");
-        }
-
-        private bool OrderExists(int id)
-        {
-          return (_context.Orders?.Any(e => e.OrderId == id)).GetValueOrDefault();
         }
     }
 }

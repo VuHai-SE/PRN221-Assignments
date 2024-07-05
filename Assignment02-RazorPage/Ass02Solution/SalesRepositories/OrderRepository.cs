@@ -23,6 +23,11 @@ namespace SalesRepositories
             return _orderDAO.GetAllOrders();
         }
 
+        public IEnumerable<Member> GetAllMembers()
+        {
+            return _orderDAO.GetAllMembers();
+        }
+
         public int FindOrderIdByMemberId(int memberId)
         {
             return _orderDAO.FindOrderIdByMemberId(memberId);
@@ -33,30 +38,38 @@ namespace SalesRepositories
             return _orderDAO.GetOrderById(OrderId);
         }
 
-        public void AddOrder(OrderDetailDto orderDto)
+        //public void AddOrder(OrderDetailDto orderDto)
+        //{
+        //    var order = new Order
+        //    {
+        //        MemberId = orderDto.MemberId,
+        //        OrderDate = orderDto.OrderDate,
+        //        RequiredDate = orderDto.RequiredDate,
+        //        ShippedDate = orderDto.ShippedDate,
+        //        Freight = orderDto.Freight
+        //    };
+
+        //    var orderDetails = orderDto.OrderDetails.Select(od => new OrderDetail
+        //    {
+        //        ProductId = od.ProductId,
+        //        UnitPrice = od.UnitPrice,
+        //        Quantity = od.Quantity,
+        //        Discount = od.Discount
+        //    }).ToList();
+
+        //    _orderDAO.AddOrder(order, orderDetails);
+        //}
+
+        public void AddOrder(Order order)
         {
-            var order = new Order
-            {
-                OrderId = _orderDAO.GetNextOrderId(),  // Tạo OrderId mới
-                MemberId = orderDto.MemberId,
-                OrderDate = orderDto.OrderDate,
-                RequiredDate = orderDto.RequiredDate,
-                ShippedDate = orderDto.ShippedDate,
-                Freight = orderDto.Freight
-            };
-
-            var orderDetails = orderDto.OrderDetails.Select(od => new OrderDetail
-            {
-                OrderId = order.OrderId,  // Thiết lập OrderId cho từng OrderDetail
-                ProductId = od.ProductId,
-                UnitPrice = od.UnitPrice,
-                Quantity = od.Quantity,
-                Discount = od.Discount
-            }).ToList();
-
-            _orderDAO.AddOrder(order, orderDetails);
+            _orderDAO.AddOrder(order);
         }
 
+
+        //public void Add(Order order, List<OrderDetail> orderDetails)
+        //{
+        //    _orderDAO.AddOrder(order, orderDetails);
+        //}
 
         public void UpdateOrder(OrderDetailDto orderDto)
         {
@@ -81,9 +94,23 @@ namespace SalesRepositories
             _orderDAO.UpdateOrder(order, orderDetails);
         }
 
+        public void UpdateOrder(Order order)
+        {
+            _orderDAO.UpdateOrder(order, order.OrderDetails.ToList());
+        }
+
+
         public void DeleteOrder(int orderId)
         {
-            _orderDAO.DeleteOrder(orderId);
+            var order = _orderDAO.GetOrderById2(orderId);
+            if (order != null)
+            {
+                foreach (var detail in order.OrderDetails.ToList())
+                {
+                    _orderDAO.DeleteOrderDetail(detail);
+                }
+                _orderDAO.DeleteOrder(order);
+            }
         }
 
         public IEnumerable<OrderDetailDto> SearchOrders(string keyword)
@@ -114,6 +141,16 @@ namespace SalesRepositories
         public IEnumerable<OrderDetailDto> GetAllOrderDetails()
         {
             return _orderDAO.GetAllOrders();
+        }
+
+        public void Add(Order order, List<OrderDetail> orderDetails)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Order GetOrderById2(int orderId)
+        {
+            return _orderDAO.GetOrderById2(orderId);
         }
     }
 }

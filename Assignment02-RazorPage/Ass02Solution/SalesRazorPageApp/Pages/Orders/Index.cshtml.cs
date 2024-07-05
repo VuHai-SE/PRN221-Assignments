@@ -21,11 +21,21 @@ namespace SalesRazorPageApp.Pages.Orders
             _orderRepository = orderRepository;
         }
 
+        [BindProperty(SupportsGet = true)]
+        public string SearchTerm { get; set; }
+
         public IList<OrderDetailDto> Order { get; set; } = new List<OrderDetailDto>();
 
         public void OnGet()
         {
-            Order = _orderRepository.GetAllOrderDetails().ToList();
+            if (string.IsNullOrWhiteSpace(SearchTerm))
+            {
+                Order = _orderRepository.GetAllOrderDetails().ToList();
+            }
+            else
+            {
+                Order = _orderRepository.SearchOrders(SearchTerm).ToList();
+            }
         }
     }
 }

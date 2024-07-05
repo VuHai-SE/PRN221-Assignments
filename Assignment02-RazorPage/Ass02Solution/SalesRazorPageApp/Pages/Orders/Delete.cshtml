@@ -1,52 +1,58 @@
-﻿@page
+﻿@page "{id:int}"
 @model SalesRazorPageApp.Pages.Orders.DeleteModel
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Delete Order";
 }
 
-<h1>Delete</h1>
+<h1>Delete Order</h1>
 
-<h3>Are you sure you want to delete this?</h3>
+<h3>Are you sure you want to delete this order?</h3>
 <div>
     <h4>Order</h4>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Order.OrderDate)
+            Order ID
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Order.OrderDate)
+            @Model.Order.OrderId
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Order.RequiredDate)
+            Company Name
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Order.RequiredDate)
+            @Model.Order.Member.CompanyName
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Order.ShippedDate)
+            Order Date
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Order.ShippedDate)
+            @Model.Order.OrderDate
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Order.Freight)
+            Required Date
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Order.Freight)
+            @Model.Order.RequiredDate
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Order.Member)
+            Shipped Date
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Order.Member.Email)
+            @Model.Order.ShippedDate
+        </dd>
+        <dt class="col-sm-2">
+            Freight
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Order.Freight
         </dd>
     </dl>
-    
+
     <form method="post">
         <input type="hidden" asp-for="Order.OrderId" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-page="./Index">Back to List</a>
+        <a asp-page="./Index">Cancel</a>
     </form>
 </div>

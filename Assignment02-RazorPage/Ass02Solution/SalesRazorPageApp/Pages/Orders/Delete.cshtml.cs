@@ -1,63 +1,63 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
+using SalesRepositories;
+using Microsoft.Extensions.Logging;
 using SalesBOs;
-using SalesDAOs;
 
 namespace SalesRazorPageApp.Pages.Orders
 {
     public class DeleteModel : PageModel
     {
-        private readonly SalesDAOs.PRN_Assignment02Context _context;
+        private readonly IOrderRepository _orderRepository;
+        private readonly ILogger<DeleteModel> _logger;
 
-        public DeleteModel(SalesDAOs.PRN_Assignment02Context context)
+        public DeleteModel(IOrderRepository orderRepository, ILogger<DeleteModel> logger)
         {
-            _context = context;
+            _orderRepository = orderRepository;
+            _logger = logger;
         }
 
         [BindProperty]
-      public Order Order { get; set; } = default!;
+        public Order Order { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public IActionResult OnGet(int id)
         {
-            if (id == null || _context.Orders == null)
+            _logger.LogInformation("Fetching order with ID {OrderId} for deletion", id);
+            Order = _orderRepository.GetOrderById2(id);
+            if (Order == null)
             {
+                _logger.LogWarning("Order with ID {OrderId} not found", id);
                 return NotFound();
-            }
-
-            var order = await _context.Orders.FirstOrDefaultAsync(m => m.OrderId == id);
-
-            if (order == null)
-            {
-                return NotFound();
-            }
-            else 
-            {
-                Order = order;
             }
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(int? id)
+
+        public IActionResult OnPost(int id)
         {
-            if (id == null || _context.Orders == null)
+            try
             {
-                return NotFound();
-            }
-            var order = await _context.Orders.FindAsync(id);
+                _logger.LogInformation("Deleting order with ID {OrderId}", id);
+                var order = _orderRepository.GetOrderById2(id);
 
-            if (order != null)
+                if (order == null)
+                {
+                    _logger.LogWarning("Order with ID {OrderId} not found", id);
+                    return NotFound();
+                }
+
+                _orderRepository.DeleteOrder(id);
+                return RedirectToPage("./Index");
+            }
+            catch (Exception ex)
             {
-                Order = order;
-                _context.Orders.Remove(Order);
-                await _context.SaveChangesAsync();
+                _logger.LogError(ex, "Error deleting order with ID {OrderId}", id);
+                ModelState.AddModelError(string.Empty, "An error occurred while deleting the order.");
+                return Page();
             }
-
-            return RedirectToPage("./Index");
         }
+
     }
 }

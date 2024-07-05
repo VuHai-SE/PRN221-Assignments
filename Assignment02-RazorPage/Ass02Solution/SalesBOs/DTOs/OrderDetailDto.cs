@@ -9,7 +9,7 @@ namespace SalesBOs.DTOs
     public class OrderDetailDto
     {
         public int OrderId { get; set; }
-        public int MemberId { get; set; } // Thêm thuộc tính MemberId
+        public int MemberId { get; set; }
         public string CompanyName { get; set; }
         public string Email { get; set; }
         public string Country { get; set; }
@@ -17,6 +17,6 @@ namespace SalesBOs.DTOs
         public DateTime? RequiredDate { get; set; }
         public DateTime? ShippedDate { get; set; }
         public decimal? Freight { get; set; }
-        public List<OrderDetailItemDto> OrderDetails { get; set; } // Thêm danh sách chi tiết đơn hàng
+        public List<OrderDetailItemDto> OrderDetails { get; set; } = new List<OrderDetailItemDto>();
     }
 }

@@ -28,6 +28,7 @@ namespace SalesRazorPageApp.Pages.Products
 
         public IActionResult OnGet(int id)
         {
+            _logger.LogWarning("huhuuu");
             try
             {
                 Product = _productRepository.GetById(id);
