@@ -7,26 +7,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using SalesBOs;
-using SalesBOs.DTOs;
 using SalesDAOs;
 using SalesRepositories;
 
-namespace SalesRazorPageApp.Pages.Orders
+namespace SalesRazorPageApp.Pages.Members
 {
     [Authorize]
     public class IndexModel : PageModel
     {
-        private readonly IOrderRepository _orderRepository;
+        private readonly IMemberRepository _memberRepository;
 
-        public IndexModel(IOrderRepository orderRepository)
+        public IndexModel(IMemberRepository memberRepository)
         {
-            _orderRepository = orderRepository;
+            _memberRepository = memberRepository;
         }
 
         [BindProperty(SupportsGet = true)]
         public string SearchTerm { get; set; }
 
-        public IList<OrderDetailDto> Order { get; set; } = new List<OrderDetailDto>();
+        public IList<Member> Members { get; set; } = new List<Member>();
 
         public void OnGet()
         {
@@ -34,24 +33,17 @@ namespace SalesRazorPageApp.Pages.Orders
             {
                 if (string.IsNullOrWhiteSpace(SearchTerm))
                 {
-                    Order = _orderRepository.GetAllOrderDetails().ToList();
+                    Members = _memberRepository.GetAllMembers().ToList();
                 }
                 else
                 {
-                    Order = _orderRepository.SearchOrders(SearchTerm).ToList();
+                    Members = _memberRepository.SearchMembers(SearchTerm).ToList();
                 }
             }
             else
             {
                 var memberId = int.Parse(User.FindFirst("MemberId").Value);
-                if (string.IsNullOrWhiteSpace(SearchTerm))
-                {
-                    Order = _orderRepository.GetOrdersByMemberId(memberId).ToList();
-                }
-                else
-                {
-                    Order = _orderRepository.SearchOrdersByMemberId(SearchTerm, memberId).ToList();
-                }
+                Members = new List<Member> { _memberRepository.GetMemberById(memberId) };
             }
         }
     }

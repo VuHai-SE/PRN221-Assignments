@@ -11,7 +11,7 @@ CREATE TABLE Member (
     CompanyName VARCHAR(40),
     City VARCHAR(15),
     Country VARCHAR(15),
-    Password VARCHAR(30) NOT NULL
+    Password VARCHAR(100) NOT NULL
 );
 
 -- Create the Order table
@@ -50,18 +50,18 @@ CREATE TABLE OrderDetail (
 -- Use the database
 USE PRN_Assignment02;
 
--- Insert sample data into Member table
+-- Insert sample data into Member table (pass là: 123pass)
 INSERT INTO Member (Email, CompanyName, City, Country, Password) VALUES
-('hai', 'Vu Van Hai', 'Ha Noi', 'VN', '123'),
-('jane.smith@example.com', 'Smith Co', 'Los Angeles', 'USA', 'pass123'),
-('will.jones@example.com', 'Jones Corp', 'Chicago', 'USA', 'pass123'),
-('alice.brown@example.com', 'Brown Ltd', 'Houston', 'USA', 'pass123'),
-('charles.johnson@example.com', 'Johnson Inc', 'Phoenix', 'USA', 'pass123'),
-('emily.davis@example.com', 'Davis LLC', 'Philadelphia', 'USA', 'pass123'),
-('michael.miller@example.com', 'Miller Group', 'San Antonio', 'USA', 'pass123'),
-('sarah.wilson@example.com', 'Wilson & Sons', 'San Diego', 'USA', 'pass123'),
-('david.moore@example.com', 'Moore Partners', 'Dallas', 'USA', 'pass123'),
-('linda.taylor@example.com', 'Taylor Ventures', 'San Jose', 'USA', 'pass123');
+('haivv@gmail.com', 'Vu Van Hai', 'Ha Noi', 'VN', 'e6baa8a460cc15a544c61e976eae8a7d848408ce1a79db696334e54eb41b6b11'), 
+('jane.smith@example.com', 'Smith Co', 'Los Angeles', 'USA', 'e6baa8a460cc15a544c61e976eae8a7d848408ce1a79db696334e54eb41b6b11'),
+('will.jones@example.com', 'Jones Corp', 'Chicago', 'USA', 'e6baa8a460cc15a544c61e976eae8a7d848408ce1a79db696334e54eb41b6b11'),
+('alice.brown@example.com', 'Brown Ltd', 'Houston', 'USA', 'e6baa8a460cc15a544c61e976eae8a7d848408ce1a79db696334e54eb41b6b11'),
+('charles.johnson@example.com', 'Johnson Inc', 'Phoenix', 'USA', 'e6baa8a460cc15a544c61e976eae8a7d848408ce1a79db696334e54eb41b6b11'),
+('emily.davis@example.com', 'Davis LLC', 'Philadelphia', 'USA', 'e6baa8a460cc15a544c61e976eae8a7d848408ce1a79db696334e54eb41b6b11'),
+('michael.miller@example.com', 'Miller Group', 'San Antonio', 'USA', 'e6baa8a460cc15a544c61e976eae8a7d848408ce1a79db696334e54eb41b6b11'),
+('sarah.wilson@example.com', 'Wilson & Sons', 'San Diego', 'USA', 'e6baa8a460cc15a544c61e976eae8a7d848408ce1a79db696334e54eb41b6b11'),
+('david.moore@example.com', 'Moore Partners', 'Dallas', 'USA', 'e6baa8a460cc15a544c61e976eae8a7d848408ce1a79db696334e54eb41b6b11'),
+('linda.taylor@example.com', 'Taylor Ventures', 'San Jose', 'USA', 'e6baa8a460cc15a544c61e976eae8a7d848408ce1a79db696334e54eb41b6b11');
 
 -- Insert sample data into Order table
 INSERT INTO [Order] (MemberId, OrderDate, RequiredDate, ShippedDate, Freight) VALUES

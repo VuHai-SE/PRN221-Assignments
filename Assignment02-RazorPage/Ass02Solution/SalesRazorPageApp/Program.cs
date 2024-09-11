@@ -2,15 +2,17 @@
 using SalesDAOs;
 using SalesRazorPageApp.Pages.Orders;
 using SalesRepositories;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Đăng ký PRN_Assignment02Context với DI container
+// Register PRN_Assignment02Context with the DI container
 builder.Services.AddDbContext<PRN_Assignment02Context>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionStringDB")));
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddSession();
 builder.Services.AddScoped<ProductDAO>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<OrderDAO>();
@@ -21,7 +23,15 @@ builder.Services.AddScoped<MemberDAO>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddLogging();
 
-// Cấu hình logging
+// Configure authentication
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Index";
+        options.AccessDeniedPath = "/AccessDenied";
+    });
+
+// Configure logging
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.SetMinimumLevel(LogLevel.Debug);
@@ -32,15 +42,15 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+app.UseSession();
 app.UseRouting();
 
+app.UseAuthentication(); // Add authentication middleware
 app.UseAuthorization();
 
 app.MapRazorPages();

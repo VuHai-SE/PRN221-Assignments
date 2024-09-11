@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using SalesRepositories;
 using Microsoft.Extensions.Logging;
 using SalesBOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SalesRazorPageApp.Pages.Orders
 {
+    [Authorize(Roles = "Admin")]
     public class DeleteModel : PageModel
     {
         private readonly IOrderRepository _orderRepository;

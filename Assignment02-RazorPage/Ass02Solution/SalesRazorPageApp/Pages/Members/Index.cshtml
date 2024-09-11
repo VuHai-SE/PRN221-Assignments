@@ -1,0 +1,54 @@
+﻿@page
+@model SalesRazorPageApp.Pages.Members.IndexModel
+
+@{
+    ViewData["Title"] = "Members";
+}
+
+<h1>Member List</h1>
+
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-page="Create">Create New</a>
+    </p>
+
+    <form method="get">
+        <div class="form-group">
+            <input type="text" name="SearchTerm" value="@Model.SearchTerm" class="form-control" placeholder="Search Members" />
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+}
+
+<table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>MemberId</th>
+            <th>Email</th>
+            <th>CompanyName</th>
+            <th>City</th>
+            <th>Country</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var member in Model.Members)
+        {
+            <tr>
+                <td>@member.MemberId</td>
+                <td>@member.Email</td>
+                <td>@member.CompanyName</td>
+                <td>@member.City</td>
+                <td>@member.Country</td>
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@member.MemberId">Edit</a>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <span> | <a asp-page="./Delete" asp-route-id="@member.MemberId">Delete</a></span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

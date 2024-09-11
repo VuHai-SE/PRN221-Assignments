@@ -46,17 +46,23 @@ namespace SalesDAOs
 
         public void AddMember(Member member)
         {
-            int newMemberId = _context.Members.Any() ? _context.Members.Max(m => m.MemberId) + 1 : 1;
-            member.MemberId = newMemberId;
-
             _context.Members.Add(member);
             _context.SaveChanges();
         }
 
         public void UpdateMember(Member member)
         {
-            _context.Members.Update(member);
-            _context.SaveChanges();
+            var existingMember = _context.Members.Find(member.MemberId);
+            if (existingMember != null)
+            {
+                _context.Entry(existingMember).CurrentValues.SetValues(member);
+                _context.SaveChanges();
+            }
+            else
+            {
+                // Handle the case where the member does not exist
+                throw new Exception("Member not found.");
+            }
         }
 
         public void DeleteMember(int memberId)

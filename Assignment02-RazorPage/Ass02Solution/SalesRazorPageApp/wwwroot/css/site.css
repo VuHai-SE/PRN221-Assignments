@@ -1,4 +1,4 @@
-html {
+﻿html {
   font-size: 14px;
 }
 
@@ -15,4 +15,18 @@ html {
 
 body {
   margin-bottom: 60px;
+}
+
+/* Tùy chỉnh các phần tử form và bảng */
+.form-group label {
+    font-weight: bold;
+}
+
+.table thead th {
+    background-color: #343a40;
+    color: #fff;
+}
+
+.alert {
+    margin-top: 20px;
 }

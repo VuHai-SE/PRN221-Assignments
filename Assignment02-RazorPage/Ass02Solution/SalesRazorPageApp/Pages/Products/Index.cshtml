@@ -7,28 +7,29 @@
 
 <h1>Products</h1>
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-page="Create">Create New</a>
+    </p>
+}
+
+<form method="get">
+    <div class="form-group">
+        <input type="text" name="SearchTerm" value="@Model.SearchTerm" class="form-control" placeholder="Search by ProductId or ProductName" />
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
 <table class="table">
     <thead>
         <tr>
             <th>ID</th>
-            <th>
-                CategoryId
-            </th>
-            <th>
-                Product Name
-            </th>
-            <th>
-                Weight
-            </th>
-            <th>
-                Unit Price
-            </th>
-            <th>
-                Units In Stock
-            </th>
+            <th>CategoryId</th>
+            <th>Product Name</th>
+            <th>Weight</th>
+            <th>Unit Price</th>
+            <th>Units In Stock</th>
             <th>Action</th>
         </tr>
     </thead>
@@ -36,28 +37,23 @@
         @foreach (var item in Model.Product)
         {
             <tr>
+                <td>@Html.DisplayFor(modelItem => item.ProductId)</td>
+                <td>@Html.DisplayFor(modelItem => item.CategoryId)</td>
+                <td>@Html.DisplayFor(modelItem => item.ProductName)</td>
+                <td>@Html.DisplayFor(modelItem => item.Weight)</td>
+                <td>@Html.DisplayFor(modelItem => item.UnitPrice)</td>
+                <td>@Html.DisplayFor(modelItem => item.UnitsInStock)</td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ProductId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CategoryId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ProductName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Weight)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UnitPrice)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UnitsInStock)
-                </td>
-                <td>
-                    <a asp-page="./Edit" asp-route-id="@item.ProductId">Edit</a> |
-                    <a asp-page="./Details" asp-route-id="@item.ProductId">Details</a> |
-                    <a asp-page="./Delete" asp-route-id="@item.ProductId">Delete</a>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <span><a asp-page="./Edit" asp-route-id="@item.ProductId">Edit</a> |</span>
+                        <span><a asp-page="./Details" asp-route-id="@item.ProductId">Details</a> |</span>
+                        <a asp-page="./Delete" asp-route-id="@item.ProductId">Delete</a>
+                    }
+                    else
+                    {
+                        <a asp-page="./Details" asp-route-id="@item.ProductId">Details</a>
+                    }
                 </td>
             </tr>
         }
